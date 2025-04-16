@@ -16,7 +16,8 @@
     <string name="advanced_label">Advanced</string>
     <string name="choose_opponent">Who are you going to challenge?</string>
     <string name="start_race_label">Start Race</string>
-
+    <string name="timer_label">Time: </string>
+    <string name="time">0:00</string>
     <!-- Placeholder Text for Text Input -->
 
     <string name="username_placeholder">Enter Username...</string>

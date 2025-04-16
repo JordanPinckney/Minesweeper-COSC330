@@ -24,4 +24,10 @@ public class HomePageActivity extends AppCompatActivity {
         Intent playRace = new Intent(this, PrepareRaceActivity.class);
         startActivity(playRace);
     }
+
+    //this will eventually hold the log out logic
+    public void onClickLogOut(View view){
+        Intent logOut = new Intent(this, TitlePageActivity.class);
+        startActivity(logOut);
+    }
 }
