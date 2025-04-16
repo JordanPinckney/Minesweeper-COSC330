@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Minesweeper</string>
+
+    <!-- Text for Buttons and Headings -->
+
+    <string name="play_solo_label">Play Solo</string>
+    <string name="play_race_label">Play Race</string>
+    <string name="log_out_label">Log Out</string>
+    <string name="select_level_label">Select Level</string>
+    <string name="create_account_text">Create New Account</string>
+    <string name="login_text">Login</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="beginner_label">Beginner</string>
+    <string name="intermediate_label">Intermediate</string>
+    <string name="advanced_label">Advanced</string>
+    <string name="choose_opponent">Who are you going to challenge?</string>
+    <string name="start_race_label">Start Race</string>
+
+    <!-- Placeholder Text for Text Input -->
+
+    <string name="username_placeholder">Enter Username...</string>
+    <string name="password_placeholder">Enter Password...</string>
+    <string name="opponent_placeholder">Enter Opponents Username...</string>
+
+</resources>
