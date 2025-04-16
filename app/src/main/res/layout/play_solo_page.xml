@@ -23,6 +23,7 @@
 
     <Button
         android:id="@+id/beginner_button"
+        android:onClick="onClickBeginner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/beginner_label"
@@ -34,7 +35,8 @@
         />
 
     <Button
-        android:id="@+id/intermidate_button"
+        android:id="@+id/intermediate_button"
+        android:onClick="onClickIntermediate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/intermediate_label"
@@ -47,6 +49,7 @@
 
     <Button
         android:id="@+id/advanced_button"
+        android:onClick="onClickAdvanced"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/advanced_label"
