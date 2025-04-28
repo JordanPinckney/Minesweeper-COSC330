@@ -17,25 +17,21 @@ public class PlaySoloActivity extends AppCompatActivity {
         setContentView(R.layout.play_solo_page);
     }
 
-    //navigates to the game board and marks beginner
     public void onClickBeginner(View view){
-        level = "beginner";
         Intent beginnerBoard = new Intent(this, GameBoardActivity.class);
+        beginnerBoard.putExtra("level", "beginner");  // Pass level here
         startActivity(beginnerBoard);
-
     }
 
-    //navigates to game board and marks intermediate
     public void onClickIntermediate(View view){
-        level = "intermediate";
         Intent intermediateBoard = new Intent(this, GameBoardActivity.class);
+        intermediateBoard.putExtra("level", "intermediate");
         startActivity(intermediateBoard);
     }
 
-    //navigates to game board and marks advanced
     public void onClickAdvanced(View view){
-        level = "advanced";
         Intent advancedBoard = new Intent(this, GameBoardActivity.class);
+        advancedBoard.putExtra("level", "advanced");
         startActivity(advancedBoard);
     }
 }
