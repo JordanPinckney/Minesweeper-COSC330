@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "598645890960",
+    "firebase_url": "https://minesweeper-bff64-default-rtdb.firebaseio.com",
+    "project_id": "minesweeper-bff64",
+    "storage_bucket": "minesweeper-bff64.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598645890960:android:64f52582e9c76773c55d15",
+        "android_client_info": {
+          "package_name": "com.example.minesweeper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzmmIM2vtLPOlh0svA57Y7zBLBuXjyDXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

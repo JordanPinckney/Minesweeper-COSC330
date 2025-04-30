@@ -15,10 +15,15 @@ import android.widget.GridLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameBoardActivity extends AppCompatActivity {
+
+    FirebaseUser user;
 
     public static String soloLevel = PlaySoloActivity.level;
     private Button[][] gameBoard;
@@ -49,6 +54,8 @@ public class GameBoardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board_template);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
         started = false;
         // Get the level from Intent
         String soloLevel = getIntent().getStringExtra("level");

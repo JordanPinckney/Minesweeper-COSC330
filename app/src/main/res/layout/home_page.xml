@@ -11,12 +11,12 @@
     tools:context=".HomePageActivity">
 
     <TextView
-        android:id="@+id/insert_username"
+        android:id="@+id/insert_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/username_label"
+        android:text="@string/email_label"
         android:textAlignment="center"
-        android:textSize="48sp"
+        android:textSize="36sp"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:layout_marginVertical="50dp"
@@ -54,5 +54,6 @@
         android:background="@drawable/boxy_button"
         app:backgroundTint="@color/dark_gray"
         android:text="@string/log_out_label"
+        android:onClick="onClickLogOut"
         android:textSize="20sp"/>
 </LinearLayout>
