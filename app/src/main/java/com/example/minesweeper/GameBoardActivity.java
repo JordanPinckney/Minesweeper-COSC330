@@ -11,12 +11,18 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.GridLayout;
+import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -43,6 +49,7 @@ public class GameBoardActivity extends AppCompatActivity {
     private static int ROW;
     private static int COLUMN;
     private static Boolean started;
+    private Boolean isMultiplayer;
     int[] seconds;
     LinearLayout holdBoard;
     Handler handler;
@@ -55,6 +62,7 @@ public class GameBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board_template);
 
+        isMultiplayer = getIntent().getBooleanExtra("isMultiplayer", false);
         user = FirebaseAuth.getInstance().getCurrentUser();
         started = false;
         // Get the level from Intent
@@ -84,6 +92,57 @@ public class GameBoardActivity extends AppCompatActivity {
                 handler.postDelayed(this, 1000);  // Repeat every 1 second
             }
         };
+
+        if (isMultiplayer) {
+            handler.post(runnable);
+            String matchID = getIntent().getStringExtra("matchID");
+            String myUID = user.getUid();
+
+            // Listen for opponent winning
+            FirebaseDatabase.getInstance()
+                    .getReference("matches")
+                    .child(matchID)
+                    .child("status")
+                    .child("winner")
+                    .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (!snapshot.exists()) return;
+                            String winnerUID = snapshot.getValue(String.class);
+                            if (!winnerUID.equals(myUID)) {
+                                handler.removeCallbacks(runnable);
+                                disableBoard();
+                                showYouLosePopup();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull com.google.firebase.database.DatabaseError error) {}
+                    });
+
+            // Listen for end-of-game choices (back)
+            FirebaseDatabase.getInstance()
+                    .getReference("matches")
+                    .child(matchID)
+                    .child("end_decisions")
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                if ("back".equals(child.getValue(String.class))) {
+                                    Intent intent = new Intent(GameBoardActivity.this, HomePageActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                    break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {}
+                    });
+
+        }
     }
 
 
@@ -161,7 +220,9 @@ public class GameBoardActivity extends AppCompatActivity {
         if (!started) {
             placeBomb(i, j);
             started = true;
-            handler.post(runnable);
+            if (!isMultiplayer) {
+                handler.post(runnable);
+            }
         }
         // if clicked cell was 0
         if (board[i][j] == 0) {
@@ -170,7 +231,9 @@ public class GameBoardActivity extends AppCompatActivity {
         // if clicked cell was a bomb
         else if (board[i][j] == -1) {
             // stops the timer
-            handler.removeCallbacks(runnable);
+            if (!isMultiplayer) {
+                handler.removeCallbacks(runnable);
+            }
             // set bomb picture on the -1 cells
             // disable buttons
             for (int row = 0; row < ROW; row++) {
@@ -284,13 +347,20 @@ public class GameBoardActivity extends AppCompatActivity {
     }
 
     private void gameOver() {
-        handler.removeCallbacks(runnable);
-        LinearLayout gameOverPopup = findViewById(R.id.GameOverPopup);
-        TextView gameOverMessage = findViewById(R.id.GameOverMessage);
-        gameOverMessage.setText("Game Over!");
-        gameOverPopup.setVisibility(View.VISIBLE);
+        if (isMultiplayer) {
+            holdBoard.removeAllViews();
+            Toast.makeText(this, "BOOM! Reset board!", Toast.LENGTH_SHORT).show();
+            started = false;
+            buildBoard();
+        }
+        else {
+            handler.removeCallbacks(runnable);
+            LinearLayout gameOverPopup = findViewById(R.id.GameOverPopup);
+            TextView gameOverMessage = findViewById(R.id.GameOverMessage);
+            gameOverMessage.setText("Game Over!");
+            gameOverPopup.setVisibility(View.VISIBLE);
+        }
     }
-
 
     private void OnClickAgain(View view) {
         holdBoard.removeAllViews();
@@ -298,16 +368,24 @@ public class GameBoardActivity extends AppCompatActivity {
         seconds = new int[]{0};
         timer.setText("");
         buildBoard();
-        LinearLayout gameOverPopup = findViewById(R.id.GameOverPopup);
-        gameOverPopup.setVisibility(View.GONE);
+        findViewById(R.id.GameOverPopup).setVisibility(View.GONE);
     }
-
 
     private void OnClickBack(View view) {
-        Intent intermediateBoard = new Intent(this, PlaySoloActivity.class);
-        startActivity(intermediateBoard);
-//        setContentView(R.layout.play_solo_page);
+        if (isMultiplayer) {
+            // If you're navigating immediately, send correct intent data:
+            Intent intent = new Intent(this, HomePageActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            // solo mode
+            Intent intent = new Intent(this, PlaySoloActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
+
+
 
     private void checkWin() {
         boolean won = true;
@@ -327,6 +405,18 @@ public class GameBoardActivity extends AppCompatActivity {
             // Stop the timer
             handler.removeCallbacks(runnable);
 
+            // update firebase to let another player know you won the game
+            if (isMultiplayer) {
+                FirebaseDatabase.getInstance()
+                        .getReference("matches")
+                        .child(getIntent().getStringExtra("matchID"))
+                        .child("status")
+                        .child("winner")
+                        .setValue(user.getUid());
+                // Hide the "Again" button in multiplayer mode
+                findViewById(R.id.btnAgain).setVisibility(View.GONE);
+            }
+
             // Show popup with "You Won!"
             LinearLayout gameOverPopup = findViewById(R.id.GameOverPopup);
             TextView gameOverMessage = findViewById(R.id.GameOverMessage);
@@ -335,12 +425,28 @@ public class GameBoardActivity extends AppCompatActivity {
             gameOverPopup.setVisibility(View.VISIBLE);
 
             // Disable all buttons
-            for (int i = 0; i < ROW; i++) {
-                for (int j = 0; j < COLUMN; j++) {
-                    gameBoard[i][j].setEnabled(false);
-                }
+            disableBoard();
+        }
+    }
+
+    // if your opponent finished before you finish, your board is disabled
+    private void disableBoard() {
+        for (int i = 0; i < ROW; i++) {
+            for (int j = 0; j < COLUMN; j++) {
+                gameBoard[i][j].setEnabled(false);
             }
         }
+    }
+
+    // show you lost the game on the screen
+    private void showYouLosePopup() {
+        LinearLayout gameOverPopup = findViewById(R.id.GameOverPopup);
+        TextView gameOverMessage = findViewById(R.id.GameOverMessage);
+        gameOverMessage.setText("You Lose!");
+
+        // Hide the "Again" button in multiplayer mode
+        findViewById(R.id.btnAgain).setVisibility(View.GONE);
+        gameOverPopup.setVisibility(View.VISIBLE);
     }
 
 }
