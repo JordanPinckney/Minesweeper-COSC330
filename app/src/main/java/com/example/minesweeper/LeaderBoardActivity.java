@@ -1,8 +1,10 @@
 package com.example.minesweeper;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,5 +43,11 @@ public class LeaderBoardActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.w("Firestore", "Error getting leaderboard data", e);
                 });
+    }
+
+    public void onClickPageBack(View view) {
+        Intent intent = new Intent(this, HomePageActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

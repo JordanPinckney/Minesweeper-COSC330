@@ -113,5 +113,11 @@ public class PrepareRaceActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
+    public void onClickPageBack(View view) {
+        Intent intent = new Intent(this, HomePageActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
 

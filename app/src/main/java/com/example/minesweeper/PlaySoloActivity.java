@@ -143,4 +143,9 @@ public class PlaySoloActivity extends AppCompatActivity {
         finish();
     }
 
+    public void onClickPageBack(View view) {
+        Intent intent = new Intent(this, HomePageActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
