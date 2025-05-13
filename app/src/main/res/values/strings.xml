@@ -17,6 +17,8 @@
     <string name="choose_opponent">Who are you going to challenge?</string>
     <string name="start_race_label">Start Race</string>
     <string name="timer_label">Time: </string>
+    <string name="leaderboard_label">Leaderboard</string>
+    <string name="best_times">Best Times</string>
 <!--    <string name="time">0:00</string>-->
     <!-- Placeholder Text for Text Input -->
 
