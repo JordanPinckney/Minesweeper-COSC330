@@ -43,7 +43,12 @@ public class HomePageActivity extends AppCompatActivity {
         startActivity(playRace);
     }
 
-    //this will eventually hold the log out logic for the backend
+    public void onClickLeaderboard(View view){
+        Intent leaderboard = new Intent(this, LeaderBoardActivity.class);
+        startActivity(leaderboard);
+    }
+
+    //
     public void onClickLogOut(View view){
         Intent logOut = new Intent(this, TitlePageActivity.class);
         FirebaseAuth.getInstance().signOut();
