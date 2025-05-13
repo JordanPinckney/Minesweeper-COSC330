@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -24,6 +29,7 @@ import java.util.Random;
 public class GameBoardActivity extends AppCompatActivity {
 
     FirebaseUser user;
+    FirebaseFirestore db;
 
     public static String soloLevel = PlaySoloActivity.level;
     private Button[][] gameBoard;
@@ -56,6 +62,7 @@ public class GameBoardActivity extends AppCompatActivity {
         setContentView(R.layout.board_template);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
         started = false;
         // Get the level from Intent
         String soloLevel = getIntent().getStringExtra("level");
@@ -129,10 +136,13 @@ public class GameBoardActivity extends AppCompatActivity {
         gridLayout.setColumnCount(COLUMN);
         gridLayout.setRowCount(ROW);
         gridLayout.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
         ));
         gridLayout.setBackgroundColor(Color.GRAY);
+
+
+
 
         gameBoard = new Button[ROW][COLUMN];
 
@@ -141,10 +151,12 @@ public class GameBoardActivity extends AppCompatActivity {
                 Button button = new Button(this);
                 button.setLayoutParams(new ViewGroup.LayoutParams(120, 120));
                 button.setId(View.generateViewId());
-                button.setPadding(bsize, bsize, bsize, bsize);
+                button.setPadding(0,0,0,0);
                 button.setText("");
+                button.setGravity(Gravity.FILL);
                 button.setOnClickListener(this::OnClickButton);
                 button.setTag(R.id.button_position_tag, new int[]{i, j});
+
 
                 gameBoard[i][j] = button;
                 gridLayout.addView(button);
@@ -327,10 +339,32 @@ public class GameBoardActivity extends AppCompatActivity {
             // Stop the timer
             handler.removeCallbacks(runnable);
 
+            String currentTime = timer.getText().toString();
+
+            // Upload to backend
+            Map<String, Object> data = new HashMap<>();
+            data.put("duration", currentTime);
+            data.put("timestamp", System.currentTimeMillis());
+
+            String[] parts = currentTime.split(":");
+            int minutes = Integer.parseInt(parts[0]);
+            int seconds = Integer.parseInt(parts[1]);
+            int durationInSeconds = minutes * 60 + seconds;
+
+            data.put("seconds", durationInSeconds);
+
+            db.collection("times")
+                    .add(data)
+                    .addOnSuccessListener(documentReference -> {
+                        Log.d("Firebase", "Game ID: " + documentReference.getId());
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w("Firebase", "Error adding game result", e);
+                    });
+
             // Show popup with "You Won!"
             LinearLayout gameOverPopup = findViewById(R.id.GameOverPopup);
             TextView gameOverMessage = findViewById(R.id.GameOverMessage);
-            String currentTime = timer.getText().toString();
             gameOverMessage.setText("You Won! (" + currentTime + ")");
             gameOverPopup.setVisibility(View.VISIBLE);
 

@@ -1,3 +1,7 @@
+/*This activity allows a user to create an account with an email and password
+* this is stored in the database. Upon account creation, the user is automatically logged
+* in.*/
+
 package com.example.minesweeper;
 
 import static android.content.ContentValues.TAG;

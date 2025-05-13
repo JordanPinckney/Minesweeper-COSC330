@@ -17,6 +17,7 @@
         <activity android:name=".PlaySoloActivity"/>
         <activity android:name=".PrepareRaceActivity"/>
         <activity android:name=".GameBoardActivity"/>
+        <activity android:name=".LeaderBoardActivity"/>
         <activity
             android:name=".TitlePageActivity"
             android:exported="true">
