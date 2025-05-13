@@ -198,8 +198,8 @@ public class GameBoardActivity extends AppCompatActivity {
         gridLayout.setColumnCount(COLUMN);
         gridLayout.setRowCount(ROW);
         gridLayout.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
         ));
         gridLayout.setBackgroundColor(Color.GRAY);
 
@@ -214,8 +214,9 @@ public class GameBoardActivity extends AppCompatActivity {
                 button.setLayoutParams(new ViewGroup.LayoutParams(120, 120));
                 button.setId(View.generateViewId());
                 button.setPadding(0,0,0,0);
+                button.setBackgroundResource(R.drawable.border_button);
                 button.setText("");
-                button.setGravity(Gravity.FILL);
+                //button.setGravity(Gravity.FILL);
                 button.setOnClickListener(this::OnClickButton);
                 button.setTag(R.id.button_position_tag, new int[]{i, j});
 
